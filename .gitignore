@@ -2,12 +2,14 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
+.pypirc
 build/
 develop-eggs/
 dist/
@@ -46,6 +48,7 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+coverage.lcov
 *.cover
 *.py,cover
 .hypothesis/
@@ -127,3 +130,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# VSCode workspace file
+.code-workspace

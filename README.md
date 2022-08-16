@@ -1,2 +1,2 @@
-# dewloosh-plotly
-Domain specific plotting functionality with `plotly`.
+# **dewloosh.plotly - Domain spceific data visualization with plotly**
+
