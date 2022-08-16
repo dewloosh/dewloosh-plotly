@@ -1,4 +1,8 @@
 setuptools
 wheel
+numpy
 pandas
 plotly
+dewloosh.core
+neumann
+polymesh

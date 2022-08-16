@@ -1,2 +1,2 @@
-# **dewloosh.plotly - Domain spceific data visualization with plotly**
+# **dewloosh.plotly** - Domain spceific data visualization with plotly
 
