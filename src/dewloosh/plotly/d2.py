@@ -1,4 +1,4 @@
-import plotly.figure_factory as ff
+# -*- coding: utf-8 -*-
 import plotly.graph_objects as go
 
 from polymesh.topo import unique_topo_data
@@ -9,7 +9,41 @@ from .d1 import stack_lines_3d
 __all__ = ['plot_triangles_2d', 'plot_triangles_3d']
 
 
-def plot_triangles_2d(points, data=None):
+def plot_triangles_2d(points, data=None) -> go.Figure:
+    """
+    Plots a triangulation with attached field data.
+    
+    Parameters
+    ----------
+    points : :class:`numpy.ndarray`
+        2d float array of points.
+
+    data : :class:`numpy.ndarray`
+        1d float array of scalar data over the points.
+        
+    Returns
+    -------
+    figure : :class:`go.Figure`
+        The figure object.
+            
+    Example
+    -------
+    >>> from polymesh.grid import grid
+    >>> from polymesh.topo.tr import Q4_to_T3
+    >>> from dewloosh.plotly import plot_triangles_2d
+    >>> import numpy as np
+    >>> gridparams = {
+    >>>     'size' : (1200, 600),
+    >>>     'shape' : (30, 15),
+    >>>     'eshape' : (2, 2),
+    >>>     'origo' : (0, 0),
+    >>>     'start' : 0
+    >>> }
+    >>> coordsQ4, topoQ4 = grid(**gridparams)
+    >>> points, triangles = Q4_to_T3(coordsQ4, topoQ4, path='grid')
+    >>> plot_triangles_2d(points, np.random.rand(len(points)))
+    
+    """
     zmin = data.min()
     zmax = data.max()
     fig = go.Figure(data=go.Contour(
@@ -26,7 +60,32 @@ def plot_triangles_2d(points, data=None):
     return fig
 
 
-def plot_triangles_3d(points, triangles, data=None, plot_edges=True, edges=None):
+def plot_triangles_3d(points, triangles, data=None, 
+                      plot_edges=True, edges=None) -> go.Figure:
+    """
+    Plots a triangulation with attached field data in 3d.
+    
+    Parameters
+    ----------
+    points : :class:`numpy.ndarray`
+        2d float array of points.
+
+    data : :class:`numpy.ndarray`
+        1d float array of scalar data over the points.
+    
+    plot_edges : bool, Optional
+        If True, plots the edges of the mesh. Default is False.
+        
+    edges : :class:`numpy.ndarray`, Optional
+        The edges to plot, only if `plot_edges` is `True`.
+    
+    Returns
+    -------
+    figure : :class:`go.Figure`
+        The figure object.
+    
+    """
+    
     x = points[:, 0]
     y = points[:, 1]
     z = points[:, 2]
