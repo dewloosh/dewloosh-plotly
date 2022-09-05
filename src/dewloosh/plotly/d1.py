@@ -7,7 +7,8 @@ import numpy as np
 from polymesh.explode import explode_mesh
 
 
-__all__ = ['plot_lines_3d', 'stack_lines_3d', 'scatter_points_3d']
+__all__ = ['plot_lines_3d', 'stack_lines_3d', 'scatter_points_3d', 
+           'scatter_lines_3d']
 
 
 def scatter_lines_3d(fig, coords, topo, *args, **kwargs):

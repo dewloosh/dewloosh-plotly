@@ -3,6 +3,7 @@ wheel
 numpy
 pandas
 plotly
+linkeddeepdict
 dewloosh.core
 neumann
 polymesh
