@@ -10,7 +10,6 @@ sphinx-rtd-theme
 memory_profiler
 matplotlib
 ipython
-dewloosh.plotly
 pyvista
 pandas
 plotly
