@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-from polymesh.explode import explode_mesh
+from polymesh.utils import explode_mesh_bulk
 
 
 __all__ = ['plot_lines_3d', 'stack_lines_3d', 'scatter_points_3d', 
@@ -15,7 +15,7 @@ def scatter_lines_3d(fig, coords, topo, *args, **kwargs):
     # this only works if all the lines form a continuous path
     # in a way, that the first node of the lext line always
     # coincides with the end node of the previous line
-    X, _ = explode_mesh(coords, topo)
+    X, _ = explode_mesh_bulk(coords, topo)
     x = X[:, 0]
     y = X[:, 1]
     z = X[:, 2]
@@ -33,7 +33,7 @@ def scatter_lines_3d(fig, coords, topo, *args, **kwargs):
 
 
 def stack_lines_3d(fig, coords, topo, *args, **kwargs):
-    X, _ = explode_mesh(coords, topo)
+    X, _ = explode_mesh_bulk(coords, topo)
     x = X[:, 0]
     y = X[:, 1]
     z = X[:, 2]
