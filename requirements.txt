@@ -1,10 +1,5 @@
 setuptools
 wheel
-numpy
+polymesh>=0.0.9
 pandas
 plotly
-linkeddeepdict
-dewloosh.core
-neumann
-polymesh
-pyvista
