@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 import plotly.graph_objects as go
 
-from polymesh.topo import unique_topo_data
-from polymesh.tri.triutils import edges_tri
+from polymesh.utils.topology import unique_topo_data
+from polymesh.utils.tri import edges_tri
 from .d1 import stack_lines_3d
 
 
