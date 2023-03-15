@@ -1,5 +1,5 @@
-setuptools
-wheel
-polymesh>=0.0.9
+setuptools>=65.5.1 # pinned by Snyk to avoid a vulnerability
+wheel>=0.38.0 # pinned by Snyk to avoid a vulnerability
+polymesh>=0.0.14
 pandas
 plotly

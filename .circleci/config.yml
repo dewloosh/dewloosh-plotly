@@ -6,10 +6,57 @@ orbs:
   # Orb commands and jobs help you with common scripting around a language/tool
   # so you dont have to copy and paste it everywhere.
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
-  python: circleci/python@2.0.3
+  python: circleci/python@2.1.1
 
 jobs:
-  test310:  # This is the name of the job, feel free to change it to better match what you're trying to do!
+  build_test:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout  # checkout source code to working directory
+      - python/install-packages:
+          pkg-manager: pip
+          pip-dependency-file: requirements.txt
+      - python/install-packages:
+          pkg-manager: pip
+          pip-dependency-file: dev-requirements.txt
+      - run:
+          command: pip install pytest pytest-cov
+      - run:
+          name: Build wheel
+          command: |
+            pip install wheel twine
+            python setup.py install
+            python setup.py sdist bdist_wheel
+      - run:
+          name: Run tests
+          command: python -m pytest
+  
+  test_pypi_publish:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout  # checkout source code to working directory
+      - run:
+          name: Deploy to testpypi
+          command: |
+            pip install wheel twine
+            python setup.py sdist bdist_wheel
+            python -m twine upload --repository testpypi dist/*
+
+  pypi_publish:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout  # checkout source code to working directory
+      - run:
+          name: Deploy to pypi
+          command: |
+            pip install wheel twine
+            python setup.py sdist bdist_wheel
+            python -m twine upload --skip-existing dist/*
+
+  test-310:  # This is the name of the job, feel free to change it to better match what you're trying to do!
     # These next lines defines a docker executors: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from dockerhub or use one of the convenience images from CircleCI's Developer Hub
     # A list of available CircleCI docker convenience images are available here: https://circleci.com/developer/images/image/cimg/python
@@ -35,13 +82,13 @@ jobs:
           pkg-manager: pip
           pip-dependency-file: dev-requirements.txt
       - run:
-          command: pip install -e .
+          command: python setup.py install
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
           command: python -m pytest
 
-  tox-test:  # This is the name of the job, feel free to change it to better match what you're trying to do!
+  test-tox:  # This is the name of the job, feel free to change it to better match what you're trying to do!
     # These next lines defines a docker executors: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from dockerhub or use one of the convenience images from CircleCI's Developer Hub
     # A list of available CircleCI docker convenience images are available here: https://circleci.com/developer/images/image/cimg/python
@@ -63,64 +110,30 @@ jobs:
           name: Test
           command: tox
 
-  deploy-pypi:
-    docker:
-      - image: cimg/python:3.10
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "setup.py" }}-{{ checksum "Makefile" }}
-      - run:
-          name: install python dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install wheel twine
-            pip install -e .
-            python setup.py sdist bdist_wheel
-      - save_cache:
-          key: v1-dependency-cache-{{ checksum "setup.py" }}-{{ checksum "Makefile" }}
-          paths:
-            - "venv"
-      - run:
-          name: init .pypirc
-          command: |
-            echo -e "[pypi]" >> ~/.pypirc
-            echo -e "username = $PYPI_USERNAME" >> ~/.pypirc
-            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
-      - run:
-          name: upload to pypi
-          command: |
-            . venv/bin/activate
-            twine upload --skip-existing dist/*
-
 workflows:
-  version: 2
-
-  main:  # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
-    # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
+  build_test_publish:
     jobs:
-      #- tox-test
-      - test310
-
-  #nightly:
-  #  triggers:
-  #    - schedule:
-  #        cron: "0 0 * * *" # run once every day
-  #        filters:
-  #          branches:
-  #            only:
-  #              - main
-  #  jobs:
-  #    - test310
-      
-  #deploy:
-  #  jobs:
-  #    - test310
-      #- deploy-pypi:
-      #    requires:
-      #      - test310
-      #    filters:
-      #      tags:
-      #        only: /^v.*/
+      - test-310
+      - test-tox:
+          filters:
+            branches:
+              only:
+                - tox
+      - test_pypi_publish:
+          context:
+            - pypi deploy
+          requires:
+            - test-310
+          filters:
+            branches:
+              only:
+                - nightly
+      - pypi_publish:
+          context:
+            - pypi deploy
+          requires:
+            - test-310
+          filters:
+            branches:
+              only:
+                - main
