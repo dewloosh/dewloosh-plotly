@@ -2,7 +2,7 @@
 import unittest
 import numpy as np
 from polymesh.grid import grid
-from polymesh.topo.tr import Q4_to_T3
+from polymesh.utils.topology.tr import Q4_to_T3
 from dewloosh.plotly import plot_triangles_2d
 from dewloosh.plotly import scatter_lines_3d
 
